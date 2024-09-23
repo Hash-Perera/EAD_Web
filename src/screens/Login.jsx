@@ -17,7 +17,7 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <form action="#!">
+              <form action="/dashboard/home">
                 <div class="row gy-3 gy-md-4 overflow-hidden">
                   <div class="col-12">
                     <label for="email" class="form-label">
@@ -41,16 +41,17 @@ const Login = () => {
                       class="form-control"
                       name="password"
                       id="password"
-                      value=""
                       required
                     />
                   </div>
 
                   <div class="col-12">
                     <div class="d-grid">
-                      <button class="btn btn-lg btn-primary" type="submit">
-                        Log in now
-                      </button>
+                      <a href="/dashboard/home">
+                        <button class="btn btn-lg btn-primary" type="submit">
+                          Log in now
+                        </button>
+                      </a>
                     </div>
                   </div>
                 </div>

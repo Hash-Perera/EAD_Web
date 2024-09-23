@@ -4,7 +4,7 @@ import RootLayout from "./layouts/RootLayout.jsx";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import MainLayout from "./layouts/MainLayout.jsx";
-import HomeScreen from "./screens/HomeScreen.jsx";
+import DashboardScreen from "./screens/DashboardScreen.jsx";
 import Login from "./screens/Login.jsx";
 import Signup from "./screens/Signup.jsx";
 
@@ -21,12 +21,12 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "dashboad",
+        path: "dashboard",
         element: <MainLayout />,
         children: [
           {
             path: "home",
-            element: <HomeScreen />,
+            element: <DashboardScreen />,
           },
         ],
       },
