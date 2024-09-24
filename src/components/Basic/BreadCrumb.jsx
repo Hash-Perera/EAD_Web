@@ -2,12 +2,19 @@ import React from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 
 const BreadCrumb = ({ from = "Dashboard", to }) => {
+  const path = window.location.pathname.split("/");
+  if (path[0] === "") {
+    path.shift();
+  }
   return (
     <Breadcrumb>
-      <Breadcrumb.Item style={{ textDecoration: "none" }}>
-        {from}
-      </Breadcrumb.Item>
-      <Breadcrumb.Item active>{to}</Breadcrumb.Item>
+      {path?.map((item, index) => {
+        return (
+          <Breadcrumb.Item key={index} href={item} active>
+            {item}
+          </Breadcrumb.Item>
+        );
+      })}
     </Breadcrumb>
   );
 };

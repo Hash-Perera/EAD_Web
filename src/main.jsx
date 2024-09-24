@@ -7,6 +7,7 @@ import MainLayout from "./layouts/MainLayout.jsx";
 import DashboardScreen from "./screens/DashboardScreen.jsx";
 import Login from "./screens/Login.jsx";
 import Signup from "./screens/Signup.jsx";
+import ProductScreen from "./screens/ProductScreen.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
           {
             path: "home",
             element: <DashboardScreen />,
+          },
+          {
+            path: "products",
+            element: <ProductScreen />,
           },
         ],
       },
