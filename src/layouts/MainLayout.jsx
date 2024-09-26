@@ -1,8 +1,10 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { AccessControlProvider } from "../components/context/AccessControlContext";
 
 const MainLayout = () => {
-  /*   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const token = localStorage.getItem("authToken");
 
@@ -10,12 +12,14 @@ const MainLayout = () => {
     if (!token) {
       navigate("/");
     }
-  }, [token, navigate]); */
+  }, [token, navigate]);
 
   return (
-    <main>
-      <Outlet />
-    </main>
+    <AccessControlProvider>
+      <main>
+        <Outlet />
+      </main>
+    </AccessControlProvider>
   );
 };
 

@@ -17,6 +17,9 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
+import { AccessControlProvider } from "../../components/context/AccessControlContext";
+import { Roles } from "../../constants/Roles";
+import RoleBasedComponent from "../../components/context/RoleBaseComponent";
 
 const settings = ["Profile", "Logout"];
 
@@ -48,24 +51,31 @@ const Sidebar = () => {
         <Toolbar />
         <div style={{ flexGrow: 1 }}>
           <List>
-            <ListItem>
-              <ListItemButton href="/dashboard/home" className=" gap-4">
-                <DashboardIcon />
-                <ListItemText primary={"Dashboard"} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem>
-              <ListItemButton href="/dashboard/products" className=" gap-4">
-                <ProductionQuantityLimitsIcon />
-                <ListItemText primary={"Products"} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem>
-              <ListItemButton href="/dashboard/users" className=" gap-4">
-                <PersonIcon />
-                <ListItemText primary={"Users"} />
-              </ListItemButton>
-            </ListItem>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN, Roles.Customer]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/home" className=" gap-4">
+                  <DashboardIcon />
+                  <ListItemText primary={"Dashboard"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.VENDOR]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/products" className=" gap-4">
+                  <ProductionQuantityLimitsIcon />
+                  <ListItemText primary={"Products"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/users" className=" gap-4">
+                  <PersonIcon />
+                  <ListItemText primary={"Users"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
           </List>
         </div>
         <Divider />

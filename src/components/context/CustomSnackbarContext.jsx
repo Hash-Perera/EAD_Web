@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import CustomSnackbar from "./CustomSnackbar.jsx"; // Adjust path if necessary
-
+import CustomSnackbar from "../Basic/CustomSnackbar.jsx";
 // Create the Snackbar context
 const SnackbarContext = createContext();
 
