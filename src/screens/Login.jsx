@@ -4,7 +4,7 @@ import axios from "axios";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "../components/Basic/CustomSnackbarContext.jsx";
+import { useSnackbar } from "../components/context/CustomSnackbarContext.jsx";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -74,7 +74,9 @@ const Login = () => {
       await axios
         .post(loginAPI, formData)
         .then((response) => {
-          console.log(response.data);
+          localStorage.setItem("userRole", response.data.data.role);
+          localStorage.setItem("authToken", response.data.data.token);
+          localStorage.setItem("userName", response.data.data.name);
           showSnackbar("success", response.data.message || "Login successful!");
           navigate("/dashboard/home");
         })
