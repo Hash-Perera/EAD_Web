@@ -1,10 +1,102 @@
-import React from "react";
+import React, { useState } from "react";
+import { loginAPI } from "../constants/BackendAPI.js";
+import axios from "axios";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../components/Basic/CustomSnackbarContext.jsx";
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
+
+  //! Submit Form Functions
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  // State to store error messages
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
+  // Function to handle input changes
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // Clear the error message when the user starts typing
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
+  };
+
+  // Function to validate the form inputs
+  const validateForm = () => {
+    let valid = true;
+    let newErrors = { email: "", password: "" };
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+      valid = false;
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+      valid = false;
+    } else if (formData.password.length < 3) {
+      newErrors.password = "Password must be at least 6 characters.";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  // Function to handle form submission
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission
+    if (validateForm()) {
+      setLoading(true);
+
+      await axios
+        .post(loginAPI, formData)
+        .then((response) => {
+          console.log(response.data);
+          showSnackbar("success", response.data.message || "Login successful!");
+          navigate("/dashboard/home");
+        })
+        .catch((error) => {
+          console.log(error);
+          showSnackbar(
+            "error",
+            error.response?.data?.message || "Login failed. Please try again."
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
+  //! Rendering............................................................
+
   return (
     <div
-      className="bg-light py-3  py-md-5"
-      style={{ height: "100vh", alignContent: "center" }}
+      className="bg-light py-3 py-md-5"
+      style={{ minHeight: "100vh", display: "flex", alignItems: "center" }}
     >
       <div className="container">
         <div className="row justify-content-md-center">
@@ -17,7 +109,7 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <form action="/dashboard/home">
+              <form onSubmit={handleSubmit}>
                 <div className="row gy-3 gy-md-4 overflow-hidden">
                   <div className="col-12">
                     <label htmlFor="email" className="form-label">
@@ -29,8 +121,12 @@ const Login = () => {
                       name="email"
                       id="email"
                       placeholder="name@example.com"
-                      required
+                      value={formData.email}
+                      onChange={handleChange}
                     />
+                    {errors.email && (
+                      <div className="text-danger mt-1">{errors.email}</div>
+                    )}
                   </div>
                   <div className="col-12">
                     <label htmlFor="password" className="form-label">
@@ -41,20 +137,25 @@ const Login = () => {
                       className="form-control"
                       name="password"
                       id="password"
-                      required
+                      value={formData.password}
+                      onChange={handleChange}
                     />
+                    {errors.password && (
+                      <div className="text-danger mt-1">{errors.password}</div>
+                    )}
                   </div>
 
                   <div className="col-12">
                     <div className="d-grid">
-                      <a href="/dashboard/home">
-                        <button
-                          className="btn btn-lg btn-primary"
-                          type="submit"
-                        >
-                          Log in now
-                        </button>
-                      </a>
+                      <LoadingButton
+                        loading={loading}
+                        loadingPosition="end"
+                        startIcon={<SaveIcon />}
+                        variant="contained"
+                        type="submit"
+                      >
+                        Login
+                      </LoadingButton>
                     </div>
                   </div>
                 </div>

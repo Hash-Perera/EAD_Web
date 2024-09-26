@@ -9,6 +9,7 @@ import Login from "./screens/Login.jsx";
 import Signup from "./screens/Signup.jsx";
 import ProductScreen from "./screens/ProductScreen.jsx";
 import UserList from "./screens/user/UserList.jsx";
+import { SnackbarProvider } from "./components/Basic/CustomSnackbarContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <SnackbarProvider>
+      <RouterProvider router={router} />
+    </SnackbarProvider>
   </React.StrictMode>
 );
