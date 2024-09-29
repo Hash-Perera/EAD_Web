@@ -8,7 +8,7 @@ const MainContent = ({ children }) => {
     <>
       <div className=" d-flex bg-white ">
         <Sidebar />
-        <div className=" overflow-y-auto bg-light w-100 m-2 rounded-4 p-2">
+        <div className=" overflow-y-auto bg-light w-100 m-2 p-3">
           <div className="">
             <BreadCrumb />
             {children}
