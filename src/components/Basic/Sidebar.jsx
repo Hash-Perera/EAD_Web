@@ -17,9 +17,9 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
-import { AccessControlProvider } from "../../components/context/AccessControlContext";
 import { Roles } from "../../constants/Roles";
 import RoleBasedComponent from "../../components/context/RoleBaseComponent";
+import { getUserName, getUserRole } from "../../utils/auth";
 
 const settings = ["Profile", "Logout"];
 
@@ -59,7 +59,7 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
-            <RoleBasedComponent allowedRoles={[Roles.VENDOR]}>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/products" className=" gap-4">
                   <ProductionQuantityLimitsIcon />
@@ -126,9 +126,9 @@ const Sidebar = () => {
           </Box>
 
           <Stack spacing={0} direction="column">
-            <Typography variant="h7">Hashan Perera</Typography>
+            <Typography variant="h7"> {getUserName()}</Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Admin
+              {getUserRole()}
             </Typography>
           </Stack>
         </Stack>

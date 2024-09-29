@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { loginAPI } from "../constants/BackendAPI.js";
-import axios from "axios";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../components/context/CustomSnackbarContext.jsx";
+import axiosInstance from "../utils/axios.js";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -71,7 +71,7 @@ const Login = () => {
     if (validateForm()) {
       setLoading(true);
 
-      await axios
+      await axiosInstance
         .post(loginAPI, formData)
         .then((response) => {
           localStorage.setItem("userRole", response.data.data.role);
@@ -166,12 +166,6 @@ const Login = () => {
                 <div className="col-12">
                   <hr className="mt-5 mb-4 border-secondary-subtle" />
                   <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end">
-                    <a
-                      href="/register"
-                      className="link-secondary text-decoration-none"
-                    >
-                      Create new account
-                    </a>
                     <a
                       href="#!"
                       className="link-secondary text-decoration-none"
