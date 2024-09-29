@@ -66,6 +66,12 @@ const Sidebar = () => {
                   <ListItemText primary={"Products"} />
                 </ListItemButton>
               </ListItem>
+              <ListItem>
+                <ListItemButton href="/dashboard/MyProducts" className=" gap-4">
+                  <ProductionQuantityLimitsIcon />
+                  <ListItemText primary={"My Products"} />
+                </ListItemButton>
+              </ListItem>
             </RoleBasedComponent>
 
             <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
