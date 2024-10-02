@@ -40,8 +40,15 @@ const router = createBrowserRouter([
             element: <ProductList />,
           },
           {
+
+            path: "Inventory",
+            element: <MyProductScreen/>,
+          },
+          {
+
             path: "MyProducts",
             element: <MyProductScreen />,
+
           },
           {
             path: "users",
