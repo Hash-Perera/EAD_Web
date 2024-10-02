@@ -12,20 +12,30 @@ import Paper from "@mui/material/Paper";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import CustomModal from "../../components/Basic/CustomModal";
-import { masterDataRoles, registerAPI } from "../../constants/BackendAPI";
+import {
+  deleteUser,
+  getAllUser,
+  masterDataRoles,
+  registerAPI,
+} from "../../constants/BackendAPI";
 import axiosInstance from "../../utils/axios";
 import { useSnackbar } from "../../components/context/CustomSnackbarContext";
 import FileUploader from "../../components/Basic/FileUploader";
+import UserTable from "../../components/Basic/UserTable";
 
 const UserList = () => {
   const [open, setOpen] = React.useState(false);
   const [userRoles, setUserRoles] = useState([]);
+  const [users, setUsers] = useState([]);
   const { showSnackbar } = useSnackbar();
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [totalPages, setTotalPages] = useState(0);
 
   const [loading, setLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   //! Submit Form Functions
   const [formData, setFormData] = useState({
@@ -43,6 +53,24 @@ const UserList = () => {
     confirmPassword: "",
     role: "",
   });
+
+  const handleOpen = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "",
+    });
+
+    setSelectedUser(null);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedUser(null);
+    setIsEditing(false);
+  };
 
   // Function to handle input changes
   const handleChange = (event) => {
@@ -114,6 +142,7 @@ const UserList = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(formData);
     if (validateForm()) {
       setLoading(true);
       await axiosInstance
@@ -144,6 +173,7 @@ const UserList = () => {
 
   useEffect(() => {
     getUserRoles();
+    getUserList();
   }, []);
 
   //! get user roles
@@ -155,6 +185,93 @@ const UserList = () => {
       })
       .catch((error) => {
         console.log(error);
+      });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Call the API to fetch users for the selected page
+    getUserList(page);
+  };
+
+  // const getUserList = async (page = 1) => {
+  //   await axiosInstance
+  //     .get(${getAllUser}?page=${page}&limit=${itemsPerPage})
+  //     .then((response) => {
+  //       setUsers(
+  //         response.data.data.map((user) => ({
+  //           ...user,
+  //           role: user.role, // Assuming this contains the role details you want to display
+  //         }))
+  //       );
+  //       setTotalPages(Math.ceil(response.data.total / itemsPerPage)); // Adjust according to your API response
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+
+  const getUserList = async () => {
+    await axiosInstance
+      .get(getAllUser)
+      .then((response) => {
+        console.log(response.data.data);
+        setUsers(response.data.data);
+        setTotalPages(Math.ceil(response.data.data.length / itemsPerPage)); // Adjust according to your API response
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  //enable edit
+
+  const enableEdit = (user) => {
+    setIsEditing(true);
+    setSelectedUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      password: "",
+      confirmPassword: "",
+      role: user.role,
+    });
+    setOpen(true);
+  };
+
+  //handle view details
+
+  const handleViewDetails = (user) => {
+    setSelectedUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      password: "",
+      confirmPassword: "",
+      role: user.role,
+    });
+    setIsEditing(false);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+    await axiosInstance
+      .delete(deleteUser.replace("{id}", id))
+      .then((response) => {
+        showSnackbar(
+          "success",
+          response.data.message || "User Deleted successfully!"
+        );
+        getAllUser();
+      })
+      .catch((error) => {
+        console.log(error);
+        showSnackbar(
+          "error",
+          error.response?.data?.message ||
+            "User deletion failed. Please try again."
+        );
       });
   };
 
@@ -175,19 +292,44 @@ const UserList = () => {
             Add User
           </Button>
         </Stack>
-        <Typography variant="body2" className="text-start">
-          Add user list table here. Need Backend filter option with user rle and
-          status. Need paginaion and search option. Need edit and delete and
-          view details option.
-        </Typography>
+        <UserTable
+          users={users}
+          //onEdit={handleEditUser}
+          onDelete={handleDelete}
+          currentPage={currentPage}
+          handlePageChange={handlePageChange}
+          totalPages={totalPages}
+          onUpdate={enableEdit}
+        />
 
         <CustomModal
-          title="Add User"
-          subTitle="Add your user details"
+          title={
+            selectedUser
+              ? isEditing
+                ? "Edit User"
+                : "View User Details"
+              : "Add User"
+          }
+          subTitle={
+            selectedUser
+              ? isEditing
+                ? "Update user  details"
+                : "User details"
+              : "Add New User details"
+          }
           open={open}
           handleClose={handleClose}
-          func_text="Add"
+          func_text={
+            selectedUser
+              ? isEditing
+                ? "Save Changes"
+                : "Edit User"
+              : "Add User"
+          }
           func={handleSubmit}
+          isEdit={isEditing || !selectedUser} // Enable form inputs for adding or editing
+          onEdit={enableEdit} // Allow switching to edit mode
+          loading={loading}
         >
           <form>
             <div className="mb-3">
@@ -206,7 +348,6 @@ const UserList = () => {
                 <div className="text-danger mt-1">{errors.name}</div>
               )}
             </div>
-
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email
@@ -223,46 +364,6 @@ const UserList = () => {
                 <div className="text-danger mt-1">{errors.email}</div>
               )}
             </div>
-
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Temporary Password
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              {errors.password && (
-                <div className="text-danger mt-1">{errors.password}</div>
-              )}
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="confirmPassword" className="form-label">
-                Confirm Temporary Password
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-              {errors.confirmPassword && (
-                <div className="text-danger mt-1">{errors.confirmPassword}</div>
-              )}
-            </div>
-
-            <FileUploader
-              onUploadComplete={handleUploadComplete}
-              buttonText="Profile Image"
-            />
-
             <div className="mb-3">
               <label htmlFor="role" className="form-label">
                 Role
@@ -273,6 +374,7 @@ const UserList = () => {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
+                disabled={!isEditing && selectedUser} // Disable if viewing
               >
                 <option value="">Select Role</option>
                 {userRoles.map((role) => (
@@ -285,6 +387,68 @@ const UserList = () => {
                 <div className="text-danger mt-1">{errors.role}</div>
               )}
             </div>
+            {!selectedUser && (
+              <>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">
+                    Temporary Password
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  {errors.password && (
+                    <div className="text-danger mt-1">{errors.password}</div>
+                  )}
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="confirmPassword" className="form-label">
+                    Confirm Temporary Password
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                  />
+                  {errors.confirmPassword && (
+                    <div className="text-danger mt-1">
+                      {errors.confirmPassword}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+            {isEditing && selectedUser && formData.profileImage && (
+              <div className="mb-3">
+                <label htmlFor="profileImage" className="form-label">
+                  Profile Image
+                </label>
+                <div className="mb-2">
+                  <img
+                    src={formData.profileImage} // Use the actual profile image URL from formData
+                    alt="Profile"
+                    className="img-thumbnail"
+                    style={{ width: "150px", height: "150px" }}
+                  />
+                </div>
+              </div>
+            )}
+            <FileUploader
+              onUploadComplete={handleUploadComplete}
+              buttonText={
+                isEditing && selectedUser
+                  ? "Change Profile Pic"
+                  : "Profile Image"
+              }
+            />
           </form>
         </CustomModal>
       </MainContent>

@@ -12,6 +12,8 @@ import UserList from "./screens/user/UserList.jsx";
 import { SnackbarProvider } from "./components/context/CustomSnackbarContext.jsx";
 import ProductList from "./screens/products/ProductList.jsx";
 import MyProductScreen from "./screens/MyProductScreen.jsx";
+import Orders from "./screens/vendor/orders";
+import Reviews from "./screens/vendor/Reviews";
 
 const router = createBrowserRouter([
   {
@@ -38,12 +40,27 @@ const router = createBrowserRouter([
             element: <ProductList />,
           },
           {
+
             path: "Inventory",
             element: <MyProductScreen/>,
           },
           {
+
+            path: "MyProducts",
+            element: <MyProductScreen />,
+
+          },
+          {
             path: "users",
             element: <UserList />,
+          },
+          {
+            path: "orders",
+            element: <Orders />,
+          },
+          {
+            path: "reviews",
+            element: <Reviews />,
           },
         ],
       },
