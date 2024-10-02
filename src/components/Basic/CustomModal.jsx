@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -25,7 +25,7 @@ const CustomModal = ({
   open,
   handleClose,
   func,
-  showButtons = true,
+  buttons = true,
 }) => {
   return (
     <Modal
@@ -52,15 +52,21 @@ const CustomModal = ({
 
         {children}
 
-        {showButtons && (
-          <div className=" flex-row gap-6">
-            <Button variant="contained" className="mt-3 me-2" onClick={func}>
-              {func_text}
-            </Button>
-            <Button variant="outlined" className="mt-3 " onClick={handleClose}>
-              Cancel
-            </Button>
-          </div>
+        {buttons && (
+          <>
+            <div className=" flex-row gap-6">
+              <Button variant="contained" className="mt-3 me-2" onClick={func}>
+                {func_text}
+              </Button>
+              <Button
+                variant="outlined"
+                className="mt-3 "
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+            </div>
+          </>
         )}
       </Box>
     </Modal>
