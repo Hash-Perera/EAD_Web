@@ -1,149 +1,252 @@
-import React from "react";
-import Sidebar from "../components/Basic/Sidebar";
+import React, { useState, useEffect } from "react";
+import Table from "react-bootstrap/Table";
+import Accordion from "react-bootstrap/Accordion";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Badge from "react-bootstrap/Badge";
 import MainContent from "../components/Basic/MainContent";
-import { Button, Typography } from "@mui/material";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import IconButton from "@mui/material/IconButton";
-import CustomModal from "../components/Basic/CustomModal";
+import axiosInstance from "../utils/axios";
+import { useSnackbar } from "../components/context/CustomSnackbarContext";
+import { FaBell } from "react-icons/fa";
 
-const ProductScreen = () => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  function createData(name,Description, Category, Price, Quantity,Status,Action) {
-    return { name, Description, Price, Quantity, Category, Status,Action };
-  }
+function MyProductScreen() {
+  const [productData, setProductData] = useState([]);
+  const [stockCount, setStockCount] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [readNotifications, setReadNotifications] = useState({});
+  const { showSnackbar } = useSnackbar();
 
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get("/Inventory/vendor/");
+        setProductData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [productData]);
 
-  const handleEdit = (name) => {
-    console.log(`Edit ${name}`);
-    // Add your edit logic here
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axiosInstance.get("/Notification/");
+        console.log("Notifications:", response.data);
+        setNotifications(response.data);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+    fetchNotifications();
+  }, [productData, readNotifications]);
+
+  const handlestockUpdate = async (id) => {
+    const newStockCount = stockCount[id] || 0;
+    try {
+      await axiosInstance.put(`/Inventory/stock/update/${id}`, {
+        stockCount: newStockCount,
+      });
+      showSnackbar("Stock Updated Successfully", "success");
+      setStockCount({ ...stockCount, [id]: "" });
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      showSnackbar("Error updating stock", "error");
+    }
   };
 
-  const handleDelete = (name) => {
-    console.log(`Delete ${name}`);
-    // Add your delete logic here
+  const handleNotificationClick = () => {
+    setShowModal(!showModal);
   };
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      await axiosInstance.put(`/Notification/${id}`);
+      setTimeout(() => {
+        setReadNotifications({ ...readNotifications, [id]: true });
+      }, 2000);
+    } catch (error) {
+      console.error("Error marking as read:", error);
+      showSnackbar("Error marking as read", "error");
+    }
+  };
+
   return (
-    <>
-      <MainContent>
-        <div className="d-flex justify-content-between">
-        <Button variant="contained" className="mt-3" onClick={handleOpen}>
-          Add Product
-        </Button>
-        <Button variant="contained" className="mt-3" onClick={handleOpen}>
-          Notification 
+    <MainContent>
+      <div>
+        <div
+          className="d-flex justify-content-between"
+          style={{ marginBottom: "20px" }}
+        >
+          <h2>My Stock</h2>
+          <Button onClick={handleNotificationClick} style={{ position: "relative" }}>
+            <FaBell />
+            {notifications.length > 0 && (
+              <Badge
+                pill
+                bg="danger"
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-5px",
+                }}
+              >
+                {notifications.length}
+              </Badge>
+            )}
           </Button>
         </div>
-        <Typography variant="h6" className="text-start mt-3 mb-2">
-          My Products
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Description</TableCell>
-                <TableCell align="right">Category</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="right">Quantity</TableCell>
-                <TableCell align="right">Status</TableCell>
-                <TableCell align="right"></TableCell>
-                
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+
+        <Modal show={showModal} onHide={handleNotificationClick} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Notifications</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "10px",
+                    backgroundColor: "#f8f9fa",
+                    borderRadius: "8px",
+                    marginBottom: "10px",
+                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                  }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
-                  <TableCell align="right"></TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      onClick={() => handleEdit(row.name)}
-                      aria-label="edit"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDelete(row.name)}
-                      aria-label="delete"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </MainContent>
+                  <span style={{ fontWeight: "500", whiteSpace: "pre-line" }}>
+                    {notification.message}
+                  </span>
+                  <Button
+                    variant={
+                      readNotifications[notification.id] ? "success" : "info"
+                    }
+                    style={{
+                      transition: "all 0.3s ease",
+                      borderRadius: "20px",
+                    }}
+                    onClick={() => handleMarkAsRead(notification.id)}
+                  >
+                    {readNotifications[notification.id]
+                      ? "Read"
+                      : "Mark as Read"}
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p style={{ textAlign: "center" }}>No new notifications</p>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleNotificationClick}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-      <CustomModal
-        title="Add Product"
-        subTitle="Add your product details"
-        open={open}
-        handleClose={handleClose}
-        func_text="Add"
-        func={handleClose}
-      >
-        <form action="">
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Name
-            </label>
-            <input type="text" className="form-control" id="name" />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="calories" className="form-label">
-              Calories
-            </label>
-            <input type="number" className="form-control" id="calories" />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="fat" className="form-label">
-              Fat
-            </label>
-            <input type="number" className="form-control" id="fat" />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="carbs" className="form-label">
-              Carbs
-            </label>
-            <input type="number" className="form-control" id="carbs" />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="protein" className="form-label">
-              Protein
-            </label>
-            <input type="number" className="form-control" id="protein" />
-          </div>
-        </form>
-      </CustomModal>
-    </>
+        <Table responsive="sm">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Sub Category Name</th>
+              <th>Stock Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(productData).map(
+              ([subcategoryName, products], index) => (
+                <React.Fragment key={index}>
+                  <tr>
+                    <td>{index + 1}</td>
+                    <td>
+                      <Accordion>
+                        <Accordion.Item eventKey="0">
+                          <Accordion.Header>{subcategoryName}</Accordion.Header>
+                          <Accordion.Body>
+                            {products.map((product) => (
+                              <Card key={product.id}>
+                                <Card.Body
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div>
+                                    <Card.Title>{product.name}</Card.Title>
+                                    <Card.Text>{product.description}</Card.Text>
+                                    <Card.Text>
+                                      Price: {product.price}
+                                    </Card.Text>
+
+                                    <Card.Text>
+                                      <b>Stock Count: {product.stockCount}</b>
+                                    </Card.Text>
+                                    <div
+                                      style={{ display: "flex", gap: "10px" }}
+                                    >
+                                      <input
+                                        type="number"
+                                        placeholder="Update Stock"
+                                        style={{
+                                          borderRadius: "5px",
+                                          padding: "5px",
+                                        }}
+                                        value={stockCount[product.id] || ""}
+                                        onChange={(e) =>
+                                          setStockCount({
+                                            ...stockCount,
+                                            [product.id]: e.target.value,
+                                          })
+                                        }
+                                      />
+                                      <Button
+                                        variant="primary"
+                                        onClick={() =>
+                                          handlestockUpdate(product.id)
+                                        }
+                                      >
+                                        Update
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                                  <img
+                                    src={product.images}
+                                    alt={product.name}
+                                    style={{
+                                      maxWidth: "150px",
+                                      maxHeight: "150px",
+                                      objectFit: "cover",
+                                      marginLeft: "10px",
+                                    }}
+                                  />
+                                </Card.Body>
+                              </Card>
+                            ))}
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    </td>
+                    <td>
+                      {products.reduce(
+                        (acc, product) => acc + product.stockCount,
+                        0
+                      )}
+                    </td>
+                  </tr>
+                </React.Fragment>
+              )
+            )}
+          </tbody>
+        </Table>
+      </div>
+    </MainContent>
   );
-};
+}
 
-export default ProductScreen;
+export default MyProductScreen;
