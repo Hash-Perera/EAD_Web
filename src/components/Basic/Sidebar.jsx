@@ -82,6 +82,22 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.VENDOR]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/orders" className=" gap-4">
+                  <PersonIcon />
+                  <ListItemText primary={"Orders"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.VENDOR, Roles.ADMIN]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/reviews" className=" gap-4">
+                  <PersonIcon />
+                  <ListItemText primary={"reviews"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
           </List>
         </div>
         <Divider />
