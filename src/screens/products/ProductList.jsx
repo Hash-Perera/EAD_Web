@@ -9,16 +9,42 @@ import {
   masterDataCategories,
   productCreate,
   masterDataSubCategories,
+  productGetAll,
+  productDelete,
+  productUpdate,
 } from "../../constants/BackendAPI";
 import { useSnackbar } from "../../components/context/CustomSnackbarContext";
+import ProductCard from "../../components/Basic/ProductCard";
+import ImageCarousel from "../../components/Basic/ImageCarousal";
+import ViewProductModal from "../../components/Basic/ViewProductModal";
 
 const ProductList = () => {
   const [open, setOpen] = React.useState(false);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const { showSnackbar } = useSnackbar();
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null); // Track the selected product
+  const [isEditing, setIsEditing] = useState(false); // New state to toggle between add/edit/view modes
+
+  const handleOpen = () => {
+    setFormData({
+      name: "",
+      description: "",
+      category: "",
+      subCategory: "",
+      price: "",
+      stockCount: "",
+      images: [],
+    });
+    setSelectedProduct(null); // Clear selected product
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedProduct(null); // Clear selected product
+    setIsEditing(false); // Reset edit mode
+  };
 
   //! Submit Form Functions
   const [formData, setFormData] = useState({
@@ -122,34 +148,58 @@ const ProductList = () => {
     event.preventDefault();
     if (validateForm()) {
       setLoading(true);
-      await axiosInstance
-        .post(productCreate, formData)
-        .then((response) => {
-          showSnackbar(
-            "success",
-            response.data.message || "Product added successfully!"
-          );
-          handleClose();
-          setFormData({
-            name: "",
-            description: "",
-            category: "",
-            subCategory: "",
-            price: "",
-            stockCount: "",
-            images: [],
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          showSnackbar(
-            "error",
-            error.response?.data?.message ||
-              "Product addition failed. Please try again."
-          );
-        });
 
-      setLoading(false);
+      if (selectedProduct) {
+        await axiosInstance
+          .put(productUpdate.replace("{id}", selectedProduct.id), formData)
+          .then((response) => {
+            showSnackbar(
+              "success",
+              response.data.message || "Product updated successfully!"
+            );
+            handleClose();
+            getProducts();
+          })
+          .catch((error) => {
+            showSnackbar(
+              "error",
+              error.response?.data?.message || "Product update failed."
+            );
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        await axiosInstance
+          .post(productCreate, formData)
+          .then((response) => {
+            showSnackbar(
+              "success",
+              response.data.message || "Product added successfully!"
+            );
+            handleClose();
+            setFormData({
+              name: "",
+              description: "",
+              category: "",
+              subCategory: "",
+              price: "",
+              stockCount: "",
+              images: [],
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            showSnackbar(
+              "error",
+              error.response?.data?.message ||
+                "Product addition failed. Please try again."
+            );
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
     }
   };
 
@@ -180,8 +230,74 @@ const ProductList = () => {
       });
   };
 
+  const getProducts = async () => {
+    await axiosInstance
+      .get(productGetAll)
+      .then((response) => {
+        setProducts(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  // delete product
+  const handleDelete = async (id) => {
+    await axiosInstance
+      .delete(productDelete.replace("{id}", id))
+      .then((response) => {
+        showSnackbar(
+          "success",
+          response.data.message || "Product Deleted successfully!"
+        );
+        getProducts();
+      })
+      .catch((error) => {
+        console.log(error);
+        showSnackbar(
+          "error",
+          error.response?.data?.message ||
+            "Product deletion failed. Please try again."
+        );
+      });
+  };
+
+  // Open the modal to view/edit product details
+  const handleViewDetails = (product) => {
+    setSelectedProduct(product);
+    setFormData({
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      subCategory: product.subCategory,
+      price: product.price,
+      stockCount: product.stockCount,
+      images: product.images || [],
+    });
+    setIsEditing(false); // View mode initially
+    setOpen(true); // Open modal
+  };
+
+  // Enable edit mode
+  const enableEdit = (product) => {
+    setIsEditing(true);
+
+    setSelectedProduct(product);
+    setFormData({
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      subCategory: product.subCategory,
+      price: product.price,
+      stockCount: product.stockCount,
+      images: product.images || [],
+    });
+    setOpen(true); // Open modal
+  };
+
   useEffect(() => {
     getCategories();
+    getProducts();
   }, []);
 
   return (
@@ -201,14 +317,45 @@ const ProductList = () => {
             Add Product
           </Button>
         </Stack>
-
+        <div className="row">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onDelete={handleDelete}
+              onViewDetails={handleViewDetails}
+              onUpdate={enableEdit}
+            />
+          ))}
+        </div>
         <CustomModal
-          title="Add Product"
-          subTitle="Add your product details"
+          title={
+            selectedProduct
+              ? isEditing
+                ? "Edit Product"
+                : "View Product Details"
+              : "Add Product"
+          }
+          subTitle={
+            selectedProduct
+              ? isEditing
+                ? "Update your product details"
+                : "Product details"
+              : "Add your product details"
+          }
           open={open}
           handleClose={handleClose}
-          func_text="Add"
+          func_text={
+            selectedProduct
+              ? isEditing
+                ? "Save Changes"
+                : "Edit Product"
+              : "Add Product"
+          }
           func={handleSubmit}
+          isEdit={isEditing || !selectedProduct} // Enable form inputs for adding or editing
+          onEdit={enableEdit} // Allow switching to edit mode
+          loading={loading}
         >
           <form>
             <div className="mb-3">
@@ -222,11 +369,13 @@ const ProductList = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                disabled={!isEditing && selectedProduct} // Disable in view mode
               />
               {errors.name && (
                 <div className="text-danger mt-1">{errors.name}</div>
               )}
             </div>
+
             <div className="mb-3">
               <label htmlFor="description" className="form-label">
                 Description
@@ -238,6 +387,7 @@ const ProductList = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
+                disabled={!isEditing && selectedProduct} // Disable in view mode
               />
               {errors.description && (
                 <div className="text-danger mt-1">{errors.description}</div>
@@ -254,6 +404,7 @@ const ProductList = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
+                disabled={!isEditing && selectedProduct} // Disable in view mode
               >
                 <option value="">Select category</option>
                 {categories &&
@@ -267,6 +418,7 @@ const ProductList = () => {
                 <div className="text-danger mt-1">{errors.category}</div>
               )}
             </div>
+
             <div className="mb-3">
               <label htmlFor="subCategory" className="form-label">
                 Sub Category
@@ -277,6 +429,7 @@ const ProductList = () => {
                 name="subCategory"
                 value={formData.subCategory}
                 onChange={handleChange}
+                disabled={!isEditing && selectedProduct} // Disable in view mode
               >
                 <option value="">Select sub category</option>
                 {subCategories &&
@@ -302,6 +455,7 @@ const ProductList = () => {
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
+                disabled={!isEditing && selectedProduct} // Disable in view mode
               />
               {errors.price && (
                 <div className="text-danger mt-1">{errors.price}</div>
@@ -319,18 +473,34 @@ const ProductList = () => {
                 name="stockCount"
                 value={formData.stockCount}
                 onChange={handleChange}
+                disabled={!isEditing && selectedProduct} // Disable in view mode
               />
               {errors.stockCount && (
                 <div className="text-danger mt-1">{errors.stockCount}</div>
               )}
             </div>
 
-            <FileUploader
-              onUploadComplete={handleUploadComplete}
-              buttonText="Upload Product Images"
-            />
+            {/* Conditionally render based on view/edit mode */}
+            {selectedProduct &&
+            selectedProduct.images &&
+            selectedProduct.images.length > 0 ? (
+              <div className="mb-3">
+                <label className="form-label">Product Images</label>
+                <ImageCarousel images={selectedProduct.images} />
+              </div>
+            ) : (
+              <FileUploader
+                onUploadComplete={handleUploadComplete}
+                buttonText="Upload Product Images"
+              />
+            )}
           </form>
         </CustomModal>
+        <ViewProductModal
+          product={selectedProduct}
+          open={true}
+          onDelete={handleDelete}
+        />
       </MainContent>
     </>
   );
