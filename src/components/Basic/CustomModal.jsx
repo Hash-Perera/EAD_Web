@@ -25,6 +25,7 @@ const CustomModal = ({
   open,
   handleClose,
   func,
+  showButtons = true,
 }) => {
   return (
     <Modal
@@ -51,14 +52,16 @@ const CustomModal = ({
 
         {children}
 
-        <div className=" flex-row gap-6">
-          <Button variant="contained" className="mt-3 me-2" onClick={func}>
-            {func_text}
-          </Button>
-          <Button variant="outlined" className="mt-3 " onClick={handleClose}>
-            Cancel
-          </Button>
-        </div>
+        {showButtons && (
+          <div className=" flex-row gap-6">
+            <Button variant="contained" className="mt-3 me-2" onClick={func}>
+              {func_text}
+            </Button>
+            <Button variant="outlined" className="mt-3 " onClick={handleClose}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </Box>
     </Modal>
   );
