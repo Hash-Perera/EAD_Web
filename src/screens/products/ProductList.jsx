@@ -292,7 +292,7 @@ const ProductList = () => {
       stockCount: product.stockCount,
       images: product.images || [],
     });
-    setOpen(true); // Open modal
+    setOpen(true);
   };
 
   useEffect(() => {

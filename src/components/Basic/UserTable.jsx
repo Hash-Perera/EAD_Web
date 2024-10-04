@@ -10,6 +10,10 @@ const UserTable = ({
   handlePageChange,
   totalPages,
   onUpdate,
+  onActiveChange,
+  editButton = true,
+  deleteButton = true,
+  activeButton = true,
 }) => {
   return (
     <>
@@ -34,20 +38,35 @@ const UserTable = ({
 
               <td>{user.active ? "Yes" : "No"}</td>
               <td>
-                <Button
-                  className="text-white"
-                  variant="warning"
-                  onClick={() => onUpdate(user)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => onDelete(user.id)}
-                  className="ms-2 text-white"
-                >
-                  Delete
-                </Button>
+                {editButton && (
+                  <Button
+                    className="text-white"
+                    variant="warning"
+                    onClick={() => onEdit(user)}
+                  >
+                    Edit
+                  </Button>
+                )}
+
+                {deleteButton && (
+                  <Button
+                    variant="danger"
+                    onClick={() => onDelete(user.id)}
+                    className="ms-2 text-white"
+                  >
+                    Delete
+                  </Button>
+                )}
+
+                {activeButton && (
+                  <Button
+                    variant={user.active ? "danger" : "success"}
+                    onClick={() => onActiveChange(user.id)}
+                    className="ms-2 text-white"
+                  >
+                    {user.active ? "Disable" : "Enable"}
+                  </Button>
+                )}
               </td>
             </tr>
           ))}

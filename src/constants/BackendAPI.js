@@ -5,6 +5,8 @@ export const loginAPI = "/User/login";
 export const registerAPI = "/User/register";
 export const getAllUser = "/User";
 export const deleteUser = "/User/delete/{id}";
+export const getCustomers = "/User/customers";
+export const activeCustomers = "/User/activate/{id}";
 
 export const productCreate = "/Product/create";
 export const productGetAll = "/Product";

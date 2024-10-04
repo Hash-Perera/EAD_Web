@@ -14,6 +14,7 @@ import ProductList from "./screens/products/ProductList.jsx";
 import MyProductScreen from "./screens/MyProductScreen.jsx";
 import Orders from "./screens/vendor/orders";
 import Reviews from "./screens/vendor/Reviews";
+import CustomerList from "./screens/user/CusomerList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -40,15 +41,12 @@ const router = createBrowserRouter([
             element: <ProductList />,
           },
           {
-
             path: "Inventory",
-            element: <MyProductScreen/>,
+            element: <MyProductScreen />,
           },
           {
-
             path: "MyProducts",
             element: <MyProductScreen />,
-
           },
           {
             path: "users",
@@ -61,6 +59,10 @@ const router = createBrowserRouter([
           {
             path: "reviews",
             element: <Reviews />,
+          },
+          {
+            path: "customers",
+            element: <CustomerList />,
           },
         ],
       },

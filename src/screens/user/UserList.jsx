@@ -294,7 +294,7 @@ const UserList = () => {
         </Stack>
         <UserTable
           users={users}
-          //onEdit={handleEditUser}
+          // onEdit={handleEditUser}
           onDelete={handleDelete}
           currentPage={currentPage}
           handlePageChange={handlePageChange}
