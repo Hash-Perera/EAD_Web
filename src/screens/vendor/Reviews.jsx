@@ -136,6 +136,7 @@ const Reviews = () => {
         subTitle=""
         open={open}
         handleClose={handleClose}
+        buttons={false}
       >
         {selectedProduct?.feedbacks.length > 0 ? (
           <Table striped bordered hover>
