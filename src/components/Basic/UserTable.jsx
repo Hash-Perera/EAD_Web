@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { Table, Button, Pagination } from "react-bootstrap";
+import { FaEdit, FaTrashAlt, FaToggleOn, FaToggleOff } from "react-icons/fa";
 
 const UserTable = ({
   users,
@@ -10,6 +11,10 @@ const UserTable = ({
   handlePageChange,
   totalPages,
   onUpdate,
+  onActiveChange,
+  editButton = true,
+  deleteButton = true,
+  activeButton = true,
 }) => {
   return (
     <>
@@ -19,8 +24,8 @@ const UserTable = ({
             <th>#</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Role</th> {/* Display Role ID or Role Name if available */}
-            <th>Active</th> {/* Display active status */}
+            <th>Role</th>
+            <th>Active</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -34,20 +39,68 @@ const UserTable = ({
 
               <td>{user.active ? "Yes" : "No"}</td>
               <td>
-                <Button
-                  className="text-white"
-                  variant="warning"
-                  onClick={() => onUpdate(user)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => onDelete(user.id)}
-                  className="ms-2 text-white"
-                >
-                  Delete
-                </Button>
+                {editButton && (
+                  <Button
+                    variant="light"
+                    onClick={() => onEdit(user)}
+                    className="me-2 p-2"
+                    style={{
+                      background: "#a3d2ff", // Light cool blue for Edit
+                      border: "none",
+                      width: "30px",
+                      height: "30px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <FaEdit style={{ color: "#004085" }} />
+                  </Button>
+                )}
+
+                {deleteButton && (
+                  <Button
+                    variant="light"
+                    onClick={() => onDelete(user.id)}
+                    className="me-2 p-2"
+                    style={{
+                      background: "#f9c2c2", // Light red/pink for Delete
+                      border: "none",
+                      width: "30px",
+                      height: "30px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <FaTrashAlt style={{ color: "#ff0000" }} />
+                    {/* Dark red Delete Icon */}
+                  </Button>
+                )}
+
+                {activeButton && (
+                  <Button
+                    variant="light"
+                    onClick={() => onActiveChange(user.id)}
+                    className="p-2"
+                    style={{
+                      background: user.active ? "#f9c2c2" : "#c7f5d8",
+                      border: "none",
+                      width: "30px",
+                      height: "30px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {user.active ? (
+                      <FaToggleOff style={{ color: "#ff0000" }} />
+                    ) : (
+                      <FaToggleOn style={{ color: "#39e600" }} />
+                    )}
+                    {/* Dark red for Disable, dark green for Enable */}
+                  </Button>
+                )}
               </td>
             </tr>
           ))}

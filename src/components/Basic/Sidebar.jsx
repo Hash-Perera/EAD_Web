@@ -1,6 +1,5 @@
 import React from "react";
 import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
@@ -20,9 +19,22 @@ import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import { Roles } from "../../constants/Roles";
 import RoleBasedComponent from "../../components/context/RoleBaseComponent";
-import { getUserName, getUserRole } from "../../utils/auth";
+import {
+  getUserName,
+  getUserRole,
+  logout,
+  getProfileImage,
+} from "../../utils/auth";
 
-const settings = ["Profile", "Logout"];
+const settings = [
+  { title: "Profile", func: () => {} },
+  {
+    title: "Logout",
+    func: () => {
+      logout();
+    },
+  },
+];
 
 const Sidebar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -44,31 +56,57 @@ const Sidebar = () => {
           "& .MuiDrawer-paper": {
             width: "16rem",
             boxSizing: "border-box",
+            background: "linear-gradient(135deg, #1e3c72, #2a5298)",
+            color: "white",
           },
         }}
         variant="permanent"
         anchor="left"
       >
-        <Toolbar />
+        <div style={{ textAlign: "center" }}>
+          <img
+            src="../../../public/logo_2.jpg"
+            alt="Logo"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </div>
+
         <div style={{ flexGrow: 1 }}>
-          <List>
+          <List
+            sx={{
+              "& .MuiListItemButton-root": {
+                "&:hover": {
+                  background: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+              "& .MuiSvgIcon-root": {
+                color: "white",
+              },
+              "& .MuiListItemText-root": {
+                color: "white",
+              },
+              "& .MuiTypography-root": {
+                color: "white",
+              },
+            }}
+          >
             <RoleBasedComponent allowedRoles={[Roles.ADMIN, Roles.Customer]}>
               <ListItem>
-                <ListItemButton href="/dashboard/home" className=" gap-4">
+                <ListItemButton href="/dashboard/home" className="gap-4">
                   <DashboardIcon />
                   <ListItemText primary={"Dashboard"} />
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
-            <RoleBasedComponent allowedRoles={[Roles.ADMIN,Roles.VENDOR]}>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN, Roles.VENDOR]}>
               <ListItem>
-                <ListItemButton href="/dashboard/products" className=" gap-4">
+                <ListItemButton href="/dashboard/products" className="gap-4">
                   <ProductionQuantityLimitsIcon />
                   <ListItemText primary={"Products"} />
                 </ListItemButton>
               </ListItem>
               <ListItem>
-                <ListItemButton href="/dashboard/Inventory" className=" gap-4">
+                <ListItemButton href="/dashboard/Inventory" className="gap-4">
                   <ProductionQuantityLimitsIcon />
                   <ListItemText primary={"Inventory"} />
                 </ListItemButton>
@@ -77,7 +115,7 @@ const Sidebar = () => {
 
             <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
               <ListItem>
-                <ListItemButton href="/dashboard/users" className=" gap-4">
+                <ListItemButton href="/dashboard/users" className="gap-4">
                   <PersonIcon />
                   <ListItemText primary={"Users"} />
                 </ListItemButton>
@@ -85,7 +123,7 @@ const Sidebar = () => {
             </RoleBasedComponent>
             <RoleBasedComponent allowedRoles={[Roles.VENDOR,Roles.ADMIN]}>
               <ListItem>
-                <ListItemButton href="/dashboard/orders" className=" gap-4">
+                <ListItemButton href="/dashboard/orders" className="gap-4">
                   <PersonIcon />
                   <ListItemText primary={"Orders"} />
                 </ListItemButton>
@@ -93,9 +131,17 @@ const Sidebar = () => {
             </RoleBasedComponent>
             <RoleBasedComponent allowedRoles={[Roles.VENDOR, Roles.ADMIN]}>
               <ListItem>
-                <ListItemButton href="/dashboard/reviews" className=" gap-4">
+                <ListItemButton href="/dashboard/reviews" className="gap-4">
                   <PersonIcon />
-                  <ListItemText primary={"reviews"} />
+                  <ListItemText primary={"Reviews"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.CSR, Roles.ADMIN]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/customers" className="gap-4">
+                  <PersonIcon />
+                  <ListItemText primary={"Customers"} />
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
@@ -109,7 +155,7 @@ const Sidebar = () => {
             </RoleBasedComponent>
           </List>
         </div>
-        <Divider />
+        <Divider sx={{ backgroundColor: "white" }} />
 
         <Stack
           direction="row"
@@ -121,7 +167,7 @@ const Sidebar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                <Avatar alt="Remy Sharp" src={getProfileImage()} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -141,9 +187,9 @@ const Sidebar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting.title} onClick={setting.func}>
                   <Typography sx={{ textAlign: "center" }}>
-                    {setting}
+                    {setting.title}
                   </Typography>
                 </MenuItem>
               ))}
@@ -152,7 +198,7 @@ const Sidebar = () => {
 
           <Stack spacing={0} direction="column">
             <Typography variant="h7"> {getUserName()}</Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: "white" }}>
               {getUserRole()}
             </Typography>
           </Stack>

@@ -77,6 +77,7 @@ const Login = () => {
           localStorage.setItem("userRole", response.data.data.role);
           localStorage.setItem("authToken", response.data.data.token);
           localStorage.setItem("userName", response.data.data.name);
+          localStorage.setItem("profileImage", response.data.data.profile);
           showSnackbar("success", response.data.message || "Login successful!");
           navigate("/dashboard/home");
         })
@@ -151,7 +152,7 @@ const Login = () => {
                     <div className="d-grid">
                       <LoadingButton
                         loading={loading}
-                        loadingPosition="end"
+                        loadingPosition="start"
                         startIcon={<SaveIcon />}
                         variant="contained"
                         type="submit"

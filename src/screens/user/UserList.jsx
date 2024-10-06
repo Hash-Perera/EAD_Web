@@ -44,6 +44,7 @@ const UserList = () => {
     password: "",
     confirmPassword: "",
     role: "",
+    profileImage: "",
   });
 
   const [errors, setErrors] = useState({
@@ -168,7 +169,13 @@ const UserList = () => {
   };
 
   const handleUploadComplete = (uploadedFiles) => {
-    console.log("Uploaded files:", uploadedFiles);
+    const event = {
+      target: {
+        name: "profileImage",
+        value: uploadedFiles[0],
+      },
+    };
+    handleChange(event);
   };
 
   useEffect(() => {
@@ -293,8 +300,9 @@ const UserList = () => {
           </Button>
         </Stack>
         <UserTable
+          activeButton={false}
           users={users}
-          //onEdit={handleEditUser}
+          // onEdit={handleEditUser}
           onDelete={handleDelete}
           currentPage={currentPage}
           handlePageChange={handlePageChange}
