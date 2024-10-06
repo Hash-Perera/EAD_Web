@@ -300,6 +300,7 @@ const UserList = () => {
           </Button>
         </Stack>
         <UserTable
+          activeButton={false}
           users={users}
           // onEdit={handleEditUser}
           onDelete={handleDelete}
