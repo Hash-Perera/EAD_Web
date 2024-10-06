@@ -19,3 +19,5 @@ export const masterDataSubCategories =
   "/MasterData/GetSubCategories/{categoryId}";
 export const getProductReviews = "/Feedback/products/reviews";
 export const vendorRating = "/Feedback/average/vendor";
+
+export const orderGetAll = "/Order";
