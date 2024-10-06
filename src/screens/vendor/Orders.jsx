@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainContent from "../../components/Basic/MainContent";
 import Table from "react-bootstrap/Table";
 import CustomModal from "../../components/Basic/CustomModal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import axiosInstance from "../../utils/axios";
 
 const sampleOrders = [
   {
@@ -104,6 +105,7 @@ const orders = () => {
   const [selectedOrderNo, setSelectedOrderNo] = useState(null); // To store selected orderNo
   const [selectedOrderLine, setSelectedOrderLine] = useState(null); // Store the selected order line for status change
   const [statusChanges, setStatusChanges] = useState({});
+  const [orders, setOrders] = useState([]);
   // Function to handle clicking an orderNo
   const handleOrderNoClick = (orderNo) => {
     setSelectedOrderNo(orderNo);
@@ -113,6 +115,7 @@ const orders = () => {
   const filteredOrderLines = sampleOrderLines?.filter(
     (line) => line?.orderNo === selectedOrderNo
   );
+  
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -154,6 +157,19 @@ const orders = () => {
   const handleCancelChanges = () => {
     setShowSaveModal(false); // Just close the modal without saving
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get("/Order/vendor/");
+        console.log("Orders:", response.data.data);
+        setOrders(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <MainContent>
@@ -171,7 +187,7 @@ const orders = () => {
               </tr>
             </thead>
             <tbody>
-              {sampleOrders?.map((order, index) => (
+              {orders?.map((order, index) => (
                 <tr key={order?._id}>
                   <td>{index + 1}</td>
                   <td>

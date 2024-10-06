@@ -7,6 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
+import InventoryIcon from '@mui/icons-material/Inventory';
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
@@ -120,7 +121,7 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
-            <RoleBasedComponent allowedRoles={[Roles.VENDOR]}>
+            <RoleBasedComponent allowedRoles={[Roles.VENDOR,Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/orders" className="gap-4">
                   <PersonIcon />
@@ -141,6 +142,14 @@ const Sidebar = () => {
                 <ListItemButton href="/dashboard/customers" className="gap-4">
                   <PersonIcon />
                   <ListItemText primary={"Customers"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.CSR, Roles.ADMIN]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/allorders" className=" gap-4">
+                <InventoryIcon />
+                  <ListItemText primary={"All Orders"} />
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>

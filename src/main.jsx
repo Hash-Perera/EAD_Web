@@ -15,6 +15,7 @@ import MyProductScreen from "./screens/MyProductScreen.jsx";
 import Orders from "./screens/vendor/orders";
 import Reviews from "./screens/vendor/Reviews";
 import CustomerList from "./screens/user/CusomerList.jsx";
+import AllOrders from "./screens/csr/AllOrders.jsx";
 
 const router = createBrowserRouter([
   {
@@ -61,8 +62,12 @@ const router = createBrowserRouter([
             element: <Reviews />,
           },
           {
+
             path: "customers",
             element: <CustomerList />,
+          },{
+            path: "allorders",
+            element: <AllOrders />
           },
         ],
       },
