@@ -17,6 +17,7 @@ import {
   getAllUser,
   masterDataRoles,
   registerAPI,
+  updateUser,
 } from "../../constants/BackendAPI";
 import axiosInstance from "../../utils/axios";
 import { useSnackbar } from "../../components/context/CustomSnackbarContext";
@@ -112,21 +113,23 @@ const UserList = () => {
       newErrors.email = "Please enter a valid email address.";
       valid = false;
     }
-
-    // Password validation
-    if (!formData.password) {
+    // Password validation (only for new user or when changing password)
+    if (!selectedUser && !formData.password) {
       newErrors.password = "Temporary Password is required.";
       valid = false;
-    } else if (formData.password.length < 3) {
+    } else if (!selectedUser && formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
       valid = false;
     }
 
-    // Confirm password validation
-    if (!formData.confirmPassword) {
+    // Confirm password validation (only for new user or when changing password)
+    if (!selectedUser && !formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your temporary password.";
       valid = false;
-    } else if (formData.confirmPassword !== formData.password) {
+    } else if (
+      !selectedUser &&
+      formData.confirmPassword !== formData.password
+    ) {
       newErrors.confirmPassword = "Passwords do not match.";
       valid = false;
     }
@@ -144,27 +147,57 @@ const UserList = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(formData);
+
     if (validateForm()) {
       setLoading(true);
-      await axiosInstance
-        .post(registerAPI, formData)
-        .then((response) => {
-          showSnackbar(
-            "success",
-            response.data.message || "User added successfully!"
-          );
-          handleClose();
-        })
-        .catch((error) => {
-          console.log(error);
-          showSnackbar(
-            "error",
-            error.response?.data?.message ||
-              "User addition failed. Please try again."
-          );
-        });
-
-      setLoading(false);
+      if (selectedUser) {
+        axiosInstance
+          .put(updateUser.replace("{id}", selectedUser.id), {
+            ...formData,
+            profileImage: formData.profileImage, // Ensure the profile image is included
+          })
+          .then((response) => {
+            showSnackbar(
+              "success",
+              response.data.message || "User updated successfully!"
+            );
+            handleClose();
+            getUserList();
+          })
+          .catch((error) => {
+            console.log(error);
+            showSnackbar(
+              "error",
+              error.response?.data?.message || "user update failed."
+            );
+          })
+          .finally(() => {
+            setLoading(false);
+            setOpen(false);
+          });
+      } else {
+        await axiosInstance
+          .post(registerAPI, formData)
+          .then((response) => {
+            showSnackbar(
+              "success",
+              response.data.message || "User added successfully!"
+            );
+            handleClose();
+          })
+          .catch((error) => {
+            console.log(error);
+            showSnackbar(
+              "error",
+              error.response?.data?.message ||
+                "User addition failed. Please try again."
+            );
+          })
+          .finally(() => {
+            setLoading(false);
+            setOpen(false);
+          });
+      }
     }
   };
 
@@ -239,25 +272,8 @@ const UserList = () => {
     setFormData({
       name: user.name,
       email: user.email,
-      password: "",
-      confirmPassword: "",
       role: user.role,
     });
-    setOpen(true);
-  };
-
-  //handle view details
-
-  const handleViewDetails = (user) => {
-    setSelectedUser(user);
-    setFormData({
-      name: user.name,
-      email: user.email,
-      password: "",
-      confirmPassword: "",
-      role: user.role,
-    });
-    setIsEditing(false);
     setOpen(true);
   };
 
@@ -307,7 +323,7 @@ const UserList = () => {
           currentPage={currentPage}
           handlePageChange={handlePageChange}
           totalPages={totalPages}
-          onUpdate={enableEdit}
+          onEdit={enableEdit}
         />
 
         <CustomModal
@@ -336,7 +352,6 @@ const UserList = () => {
           }
           func={handleSubmit}
           isEdit={isEditing || !selectedUser} // Enable form inputs for adding or editing
-          onEdit={enableEdit} // Allow switching to edit mode
           loading={loading}
         >
           <form>

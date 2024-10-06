@@ -1,5 +1,9 @@
 /* eslint-disable react/prop-types */
 
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
 const ImageCarousel = ({ images }) => {
   return (
     <div
@@ -7,6 +11,7 @@ const ImageCarousel = ({ images }) => {
       className="carousel slide"
       data-bs-ride="carousel"
     >
+      {/* Carousel indicators */}
       <div className="carousel-indicators">
         {images.map((image, index) => (
           <button
@@ -20,6 +25,8 @@ const ImageCarousel = ({ images }) => {
           ></button>
         ))}
       </div>
+
+      {/* Carousel images */}
       <div className="carousel-inner">
         {images.map((image, index) => (
           <div
@@ -28,15 +35,17 @@ const ImageCarousel = ({ images }) => {
           >
             <img
               src={image}
-              className="img-fluid"
+              className="d-block w-100"
               alt={`Slide ${index + 1}`}
-              style={{ maxHeight: "300px", height: "100%", width: "100%" }}
+              style={{ maxHeight: "300px", objectFit: "cover" }}
             />
           </div>
         ))}
       </div>
+
+      {/* Carousel controls */}
       <button
-        className="carousel-control-prev bg-dark"
+        className="carousel-control-prev"
         type="button"
         data-bs-target="#carouselExampleIndicators"
         data-bs-slide="prev"
@@ -45,7 +54,7 @@ const ImageCarousel = ({ images }) => {
         <span className="visually-hidden">Previous</span>
       </button>
       <button
-        className="carousel-control-next bg-dark"
+        className="carousel-control-next"
         type="button"
         data-bs-target="#carouselExampleIndicators"
         data-bs-slide="next"
