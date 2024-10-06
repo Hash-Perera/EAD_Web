@@ -82,7 +82,7 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
-            <RoleBasedComponent allowedRoles={[Roles.VENDOR]}>
+            <RoleBasedComponent allowedRoles={[Roles.VENDOR,Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/orders" className=" gap-4">
                   <PersonIcon />
