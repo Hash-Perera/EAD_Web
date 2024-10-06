@@ -5,3 +5,15 @@ export const getUserRole = () => {
 export const getUserName = () => {
   return localStorage.getItem("userName");
 };
+
+export const getProfileImage = () => {
+  return localStorage.getItem("profileImage");
+};
+
+export const logout = () => {
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("profileImage");
+  window.location.href = "/";
+};
