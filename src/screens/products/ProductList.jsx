@@ -17,6 +17,7 @@ import { useSnackbar } from "../../components/context/CustomSnackbarContext";
 import ProductCard from "../../components/Basic/ProductCard";
 import ImageCarousel from "../../components/Basic/ImageCarousal";
 import ViewProductModal from "../../components/Basic/ViewProductModal";
+import Swal from "sweetalert2";
 
 const ProductList = () => {
   const [open, setOpen] = React.useState(false);
@@ -26,6 +27,7 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Track the selected product
   const [isEditing, setIsEditing] = useState(false); // New state to toggle between add/edit/view modes
+  const [productViewModal, setProductViewModal] = useState(false);
 
   const handleOpen = () => {
     setFormData({
@@ -42,6 +44,12 @@ const ProductList = () => {
   };
   const handleClose = () => {
     setOpen(false);
+    setSelectedProduct(null); // Clear selected product
+    setIsEditing(false); // Reset edit mode
+  };
+
+  const handleCloseViewModal = () => {
+    setProductViewModal(false);
     setSelectedProduct(null); // Clear selected product
     setIsEditing(false); // Reset edit mode
   };
@@ -173,6 +181,7 @@ const ProductList = () => {
         await axiosInstance
           .post(productCreate, formData)
           .then((response) => {
+            getProducts();
             showSnackbar(
               "success",
               response.data.message || "Product added successfully!"
@@ -204,7 +213,13 @@ const ProductList = () => {
   };
 
   const handleUploadComplete = (uploadedFiles) => {
-    formData.images = uploadedFiles;
+    const event = {
+      target: {
+        name: "images",
+        value: uploadedFiles,
+      },
+    };
+    handleChange(event);
   };
 
   const getCategories = async () => {
@@ -243,23 +258,56 @@ const ProductList = () => {
 
   // delete product
   const handleDelete = async (id) => {
-    await axiosInstance
-      .delete(productDelete.replace("{id}", id))
-      .then((response) => {
-        showSnackbar(
-          "success",
-          response.data.message || "Product Deleted successfully!"
-        );
-        getProducts();
-      })
-      .catch((error) => {
-        console.log(error);
-        showSnackbar(
-          "error",
-          error.response?.data?.message ||
-            "Product deletion failed. Please try again."
-        );
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes !",
+    }).then(async (result) => {
+      await axiosInstance
+        .delete(productDelete.replace("{id}", id))
+        .then((response) => {
+          showSnackbar(
+            "success",
+            response.data.message || "Product Deleted successfully!"
+          );
+          getProducts();
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+          showSnackbar(
+            "error",
+            error.response?.data?.message ||
+              "Product deletion failed. Please try again."
+          );
+        });
+
+      // await axiosInstance
+      //   .get(activeCustomers.replace("{id}", id))
+      //   .then((response) => {
+      //     getUserList();
+      //     if (result.isConfirmed) {
+      //       Swal.fire({
+      //         title: "Done!",
+      //         text: response.data.message,
+      //         icon: "success",
+      //       });
+      //     }
+      //   })
+      //   .error((error) => {
+      //     if (result.isConfirmed) {
+      //       Swal.fire({
+      //         title: "Error !",
+      //         text: error.message,
+      //         icon: "fail",
+      //       });
+      //     }
+      //   });
+    });
   };
 
   // Open the modal to view/edit product details
@@ -275,7 +323,7 @@ const ProductList = () => {
       images: product.images || [],
     });
     setIsEditing(false); // View mode initially
-    setOpen(true); // Open modal
+    setProductViewModal(true);
   };
 
   // Enable edit mode
@@ -324,7 +372,6 @@ const ProductList = () => {
               product={product}
               onDelete={handleDelete}
               onViewDetails={handleViewDetails}
-              onUpdate={enableEdit}
             />
           ))}
         </div>
@@ -480,26 +527,20 @@ const ProductList = () => {
               )}
             </div>
 
-            {/* Conditionally render based on view/edit mode */}
-            {selectedProduct &&
-            selectedProduct.images &&
-            selectedProduct.images.length > 0 ? (
-              <div className="mb-3">
-                <label className="form-label">Product Images</label>
-                <ImageCarousel images={selectedProduct.images} />
-              </div>
-            ) : (
-              <FileUploader
-                onUploadComplete={handleUploadComplete}
-                buttonText="Upload Product Images"
-              />
-            )}
+            <FileUploader
+              onUploadComplete={handleUploadComplete}
+              buttonText="Upload Product Images"
+              initialImages={formData.images}
+            />
           </form>
         </CustomModal>
+
         <ViewProductModal
           product={selectedProduct}
-          open={true}
           onDelete={handleDelete}
+          onUpdate={enableEdit}
+          open={ViewProductModal}
+          handleClose={handleCloseViewModal}
         />
       </MainContent>
     </>

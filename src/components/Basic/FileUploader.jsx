@@ -1,12 +1,24 @@
-// FileUploader.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Close";
 
-const FileUploader = ({ onUploadComplete, buttonText = "Upload Files" }) => {
+const FileUploader = ({
+  onUploadComplete,
+  buttonText = "Upload Files",
+  initialImages = [],
+}) => {
   const [previews, setPreviews] = useState([]); // Previews of selected images
   const [uploadedUrls, setUploadedUrls] = useState([]); // URLs of uploaded images
+
+  // Populate previews and URLs with initial images if provided
+  useEffect(() => {
+    if (initialImages && initialImages.length > 0) {
+      const initialPreviews = initialImages.map((url) => ({ url }));
+      setPreviews(initialPreviews);
+      setUploadedUrls(initialImages);
+    }
+  }, [initialImages]);
 
   // Handle file selection and upload
   const handleFileChange = async (event) => {

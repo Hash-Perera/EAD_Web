@@ -28,3 +28,7 @@
 .product-actions {
   margin-top: 20px;
 }
+
+.swal2-container {
+  z-index: 2000 !important;
+}

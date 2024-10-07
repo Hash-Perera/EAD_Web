@@ -7,6 +7,9 @@ export const getAllUser = "/User";
 export const deleteUser = "/User/delete/{id}";
 export const getCustomers = "/User/customers";
 export const activeCustomers = "/User/activate/{id}";
+export const resetPasswordAPI = "/User/reset-password";
+export const sendOtpAPI = "/User/activate/{id}";
+export const updateUser = "/User/{id}";
 
 export const productCreate = "/Product/create";
 export const productGetAll = "/Product";

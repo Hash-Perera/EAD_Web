@@ -3,7 +3,13 @@ import CustomModal from "./CustomModal";
 import ImageCarousel from "./ImageCarousal";
 import Modal from "@mui/material/Modal";
 
-const ViewProductModal = ({ open, handleClose, product, onDelete }) => {
+const ViewProductModal = ({
+  open,
+  handleClose,
+  product,
+  onDelete,
+  onUpdate,
+}) => {
   console.log(product);
 
   return (
@@ -33,7 +39,6 @@ const ViewProductModal = ({ open, handleClose, product, onDelete }) => {
               <div className="row product-info-grid">
                 <div className="col-md-6 mb-3">
                   <h6>
-                    {" "}
                     <strong> Category</strong>
                   </h6>
                   <p>{product.category}</p>
@@ -41,7 +46,6 @@ const ViewProductModal = ({ open, handleClose, product, onDelete }) => {
 
                 <div className="col-md-6 mb-3">
                   <h6>
-                    {" "}
                     <strong>Sub Category</strong>
                   </h6>
                   <p>{product.subCategory}</p>
@@ -64,16 +68,26 @@ const ViewProductModal = ({ open, handleClose, product, onDelete }) => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="product-actions">
-              <button className="btn btn-warning text-white">
+              <button
+                onClick={() => onUpdate(product)}
+                className="btn btn-warning text-white"
+              >
                 Edit Product
               </button>
               <button
                 onClick={() => onDelete(product.id)}
-                className="btn btn-danger text-white mx-5"
+                className="btn btn-danger text-white mx-2"
               >
                 Delete Product
+              </button>
+
+              <button
+                onClick={handleClose}
+                type="button"
+                className="btn btn-outline-primary"
+              >
+                Cancel
               </button>
             </div>
           </div>

@@ -16,6 +16,9 @@ import Orders from "./screens/vendor/orders";
 import Reviews from "./screens/vendor/Reviews";
 import CustomerList from "./screens/user/CusomerList.jsx";
 import AllOrders from "./screens/csr/AllOrders.jsx";
+import ResetPassword from "./screens/ResetPassword.jsx";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Login />,
+      },
+      {
+        path: "/reset",
+        element: <ResetPassword />,
       },
       {
         path: "dashboard",
@@ -62,12 +69,12 @@ const router = createBrowserRouter([
             element: <Reviews />,
           },
           {
-
             path: "customers",
             element: <CustomerList />,
-          },{
+          },
+          {
             path: "allorders",
-            element: <AllOrders />
+            element: <AllOrders />,
           },
         ],
       },
