@@ -34,7 +34,7 @@ const AllOrders = () => {
 
     const getStatusClass = (status) => {
         switch (status) {
-            case 'Canceled':
+            case 'Cancelled':
                 return 'bg-danger text-white';
             case 'Pending':
                 return 'bg-secondary text-white';
@@ -82,7 +82,7 @@ const AllOrders = () => {
                     {selectedOrder ? (
                         <>
                             {/* Order Details */}
-                            <Card className="mb-4" style={{boxShadow: "0 4px 8px rgba(0,0,0,0.2)", borderRadius: "10px", border: "none",}}>
+                            <Card className="mb-4 top-box" style={{boxShadow: "0 4px 8px rgba(0,0,0,0.2)", borderRadius: "10px", border: "none",}}>
                                 <Card.Body>
                                     <Card.Title>Order {selectedOrder.orderNo}</Card.Title>
                                     <Card.Text >

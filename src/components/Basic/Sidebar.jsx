@@ -16,6 +16,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import CancelIcon from '@mui/icons-material/Cancel';
 import Box from "@mui/material/Box";
 import { Roles } from "../../constants/Roles";
 import RoleBasedComponent from "../../components/context/RoleBaseComponent";
@@ -150,6 +151,14 @@ const Sidebar = () => {
                 <ListItemButton href="/dashboard/allorders" className=" gap-4">
                 <InventoryIcon />
                   <ListItemText primary={"All Orders"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.CSR, Roles.ADMIN]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/tocancel" className=" gap-4">
+                <CancelIcon/>
+                  <ListItemText primary={"Cancel Requests"} />
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>

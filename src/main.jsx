@@ -16,6 +16,7 @@ import Orders from "./screens/vendor/orders";
 import Reviews from "./screens/vendor/Reviews";
 import CustomerList from "./screens/user/CusomerList.jsx";
 import AllOrders from "./screens/csr/AllOrders.jsx";
+import ToCancell from "./screens/csr/ToCancell.jsx";
 
 const router = createBrowserRouter([
   {
@@ -65,9 +66,14 @@ const router = createBrowserRouter([
 
             path: "customers",
             element: <CustomerList />,
-          },{
+          },
+          {
             path: "allorders",
             element: <AllOrders />
+          },
+          {
+            path: "tocancel",
+            element: <ToCancell />
           },
         ],
       },
