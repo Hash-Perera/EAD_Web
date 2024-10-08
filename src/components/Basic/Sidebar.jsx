@@ -8,6 +8,11 @@ import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import PeopleIcon from "@mui/icons-material/People";
+import OrderIcon from "@mui/icons-material/Assignment";
+import ReviewsIcon from "@mui/icons-material/RateReview";
+import CustomerIcon from "@mui/icons-material/Group";
+import CancelIcon from "@mui/icons-material/Cancel";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
@@ -16,7 +21,6 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import CancelIcon from '@mui/icons-material/Cancel';
 import Box from "@mui/material/Box";
 import { Roles } from "../../constants/Roles";
 import RoleBasedComponent from "../../components/context/RoleBaseComponent";
@@ -28,8 +32,6 @@ import {
   getEmail,
 } from "../../utils/auth";
 import CustomModal from "./CustomModal";
-import TextField from "@mui/icons-material/TextFields";
-import { Button } from "@mui/material";
 
 const Sidebar = () => {
   const settings = [
@@ -128,8 +130,8 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
               <ListItem>
-                <ListItemButton href="/dashboard/Inventory" className="gap-4">
-                  <ProductionQuantityLimitsIcon />
+                <ListItemButton href="/dashboard/inventory" className="gap-4">
+                  <InventoryIcon />
                   <ListItemText primary={"Inventory"} />
                 </ListItemButton>
               </ListItem>
@@ -138,7 +140,7 @@ const Sidebar = () => {
             <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/users" className="gap-4">
-                  <PersonIcon />
+                  <PeopleIcon />
                   <ListItemText primary={"Users"} />
                 </ListItemButton>
               </ListItem>
@@ -146,7 +148,7 @@ const Sidebar = () => {
             <RoleBasedComponent allowedRoles={[Roles.VENDOR, Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/orders" className="gap-4">
-                  <PersonIcon />
+                  <OrderIcon />
                   <ListItemText primary={"Orders"} />
                 </ListItemButton>
               </ListItem>
@@ -154,7 +156,7 @@ const Sidebar = () => {
             <RoleBasedComponent allowedRoles={[Roles.VENDOR, Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/reviews" className="gap-4">
-                  <PersonIcon />
+                  <ReviewsIcon />
                   <ListItemText primary={"Reviews"} />
                 </ListItemButton>
               </ListItem>
@@ -162,7 +164,7 @@ const Sidebar = () => {
             <RoleBasedComponent allowedRoles={[Roles.CSR, Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/customers" className="gap-4">
-                  <PersonIcon />
+                  <CustomerIcon />
                   <ListItemText primary={"Customers"} />
                 </ListItemButton>
               </ListItem>
@@ -170,7 +172,7 @@ const Sidebar = () => {
             <RoleBasedComponent allowedRoles={[Roles.CSR, Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/allorders" className=" gap-4">
-                  <InventoryIcon />
+                  <OrderIcon />
                   <ListItemText primary={"All Orders"} />
                 </ListItemButton>
               </ListItem>
@@ -178,7 +180,7 @@ const Sidebar = () => {
             <RoleBasedComponent allowedRoles={[Roles.CSR, Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/tocancel" className=" gap-4">
-                <CancelIcon/>
+                  <CancelIcon />
                   <ListItemText primary={"Cancel Requests"} />
                 </ListItemButton>
               </ListItem>
