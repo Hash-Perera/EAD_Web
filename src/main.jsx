@@ -16,6 +16,7 @@ import Orders from "./screens/vendor/orders";
 import Reviews from "./screens/vendor/Reviews";
 import CustomerList from "./screens/user/CusomerList.jsx";
 import AllOrders from "./screens/csr/AllOrders.jsx";
+import ToCancell from "./screens/csr/ToCancell.jsx";
 import ResetPassword from "./screens/ResetPassword.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
           {
             path: "allorders",
             element: <AllOrders />,
+          },
+          {
+            path: "tocancel",
+            element: <ToCancell />
           },
         ],
       },

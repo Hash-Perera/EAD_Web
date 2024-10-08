@@ -1,423 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Sidebar from "../../components/Basic/Sidebar";
 import { Container, Row, Col, Card, Table, ListGroup } from 'react-bootstrap';
 import MainContent from '../../components/Basic/MainContent.jsx';
+import "../../styles/order.css"
+import axiosInstance from '../../utils/axios.js';
+import {
+    orderGetAll
+} from "../../constants/BackendAPI.js"
 
 const AllOrders = () => {
-    // const [orders, setOrders] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
-    const orders = [
-        {
-            orderId: "66f7aef0565aa7eebaa1bdb2",
-            orderNo: "ORD-SKIHV4",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "934/34 Main Street, Colombo",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Partially Delivered",
-            orderLines: [
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb3",
-                    productName: "Toshiba TV",
-                    vendorName: "Hashan Perera",
-                    qty: 9,
-                    unitPrice: 25.5,
-                    total: 255,
-                    status: "Delivered"
-                },
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb4",
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera",
-                    qty: 5,
-                    unitPrice: 50,
-                    total: 250,
-                    status: "Pending"
-                }
-            ]
-        },
-        {
-            orderId: "66f7ef59a66526ff5cd994a0",
-            orderNo: "ORD-SKIUL5",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "456 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7ef59a66526ff5cd994a1",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7ef5aa66526ff5cd994a2",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7f120b3499e244dced75d",
-            orderNo: "ORD-SKIUXS",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "111 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7f123b3499e244dced75e",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7f123b3499e244dced75f",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7aef0565aa7eebaa1bdb2",
-            orderNo: "ORD-SKIHV4",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "934/34 Main Street, Colombo",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Partially Delivered",
-            orderLines: [
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb3",
-                    productName: "Toshiba TV",
-                    vendorName: "Hashan Perera",
-                    qty: 9,
-                    unitPrice: 25.5,
-                    total: 255,
-                    status: "Delivered"
-                },
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb4",
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera",
-                    qty: 5,
-                    unitPrice: 50,
-                    total: 250,
-                    status: "Pending"
-                }
-            ]
-        },
-        {
-            orderId: "66f7ef59a66526ff5cd994a0",
-            orderNo: "ORD-SKIUL5",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "456 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7ef59a66526ff5cd994a1",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7ef5aa66526ff5cd994a2",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7f120b3499e244dced75d",
-            orderNo: "ORD-SKIUXS",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "111 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7f123b3499e244dced75e",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7f123b3499e244dced75f",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7aef0565aa7eebaa1bdb2",
-            orderNo: "ORD-SKIHV4",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "934/34 Main Street, Colombo",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Partially Delivered",
-            orderLines: [
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb3",
-                    productName: "Toshiba TV",
-                    vendorName: "Hashan Perera",
-                    qty: 9,
-                    unitPrice: 25.5,
-                    total: 255,
-                    status: "Delivered"
-                },
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb4",
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera",
-                    qty: 5,
-                    unitPrice: 50,
-                    total: 250,
-                    status: "Pending"
-                }
-            ]
-        },
-        {
-            orderId: "66f7ef59a66526ff5cd994a0",
-            orderNo: "ORD-SKIUL5",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "456 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7ef59a66526ff5cd994a1",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7ef5aa66526ff5cd994a2",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7f120b3499e244dced75d",
-            orderNo: "ORD-SKIUXS",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "111 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7f123b3499e244dced75e",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7f123b3499e244dced75f",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7aef0565aa7eebaa1bdb2",
-            orderNo: "ORD-SKIHV4",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "934/34 Main Street, Colombo",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Partially Delivered",
-            orderLines: [
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb3",
-                    productName: "Toshiba TV",
-                    vendorName: "Hashan Perera",
-                    qty: 9,
-                    unitPrice: 25.5,
-                    total: 255,
-                    status: "Delivered"
-                },
-                {
-                    orderLineNo: "66f7aef3565aa7eebaa1bdb4",
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera",
-                    qty: 5,
-                    unitPrice: 50,
-                    total: 250,
-                    status: "Pending"
-                }
-            ]
-        },
-        {
-            orderId: "66f7ef59a66526ff5cd994a0",
-            orderNo: "ORD-SKIUL5",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "456 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7ef59a66526ff5cd994a1",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7ef5aa66526ff5cd994a2",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUL5",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        },
-        {
-            orderId: "66f7f120b3499e244dced75d",
-            orderNo: "ORD-SKIUXS",
-            customerNo: "66f786c9375c273bbda44538",
-            deliveryAddress: "111 Main Street, City, Country",
-            orderDate: "2024-09-24T18:30:00Z",
-            status: "Pending",
-            comments: "",
-            orderLines: [
-                {
-                    orderLineNo: "66f7f123b3499e244dced75e",
-                    productNo: "66f78e4d35e427aa3d14b33b",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 5,
-                    unitPrice: 25.5,
-                    total: 255,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                },
-                {
-                    orderLineNo: "66f7f123b3499e244dced75f",
-                    productNo: "66f7fbdceb0a043c84ddc602",
-                    vendorNo: "66e97d79542535256ad264e6",
-                    orderNo: "ORD-SKIUXS",
-                    status: "Pending",
-                    qty: 15,
-                    unitPrice: 50,
-                    total: 250,
-                    productName: "Unknown Product",
-                    vendorName: "Hashan Perera"
-                }
-            ]
-        }
-    ]
+    useEffect(() => {
+       getAllOrders();
+    }, []);
 
-    // useEffect(() => {
-    //     // Fetch all orders from the API
-    //     axios.get('http://localhost:5077/api/Order') // Replace with your actual endpoint
-    //         .then(response => {
-    //             const ordersData = response.data.data; // Assuming "data" contains the array of orders
-    //             setOrders(ordersData);
-    //             if (ordersData.length > 0) {
-    //                 setSelectedOrder(ordersData[0]); // Default to the first order
-    //             }
-    //         })
-    //         .catch(error => console.error("There was an error fetching the orders!", error));
-    // }, []);
+    const getAllOrders = async () => {
+        await axiosInstance
+        .get(orderGetAll)
+        .then((response)=>{
+            setOrders(response.data.data);
+            console.log(response.data.data)
+        })
+        .catch((error)=>{
+            console.log(error);
+        });
+    }
 
     const handleOrderClick = (order) => {
         setSelectedOrder(order); // Update selected order when clicked in the sidebar
+    };
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'Cancelled':
+                return 'bg-danger text-white';
+            case 'Pending':
+                return 'bg-secondary text-white';
+            case 'Delivered':
+                return 'bg-success text-white';
+            default:
+                return 'bg-warning text-white';
+        }
     };
 
     return (
@@ -436,10 +61,15 @@ const AllOrders = () => {
                                     key={order.orderId} 
                                     action 
                                     onClick={() => handleOrderClick(order)}
-                                    active={selectedOrder && selectedOrder.orderId === order.orderId}
+                                    className={selectedOrder && selectedOrder.orderId === order.orderId ? 'selected-order' : ''}
+                                    
                                 >
                                     <strong>{order.orderNo}</strong><br />
-                                    <small>Status: {order.status}</small>
+                                    <small>Status: 
+                                    <span className={`badge ${getStatusClass(order.status)} p-1`} style={{marginLeft:'2px'}}>
+                                        {order.status}
+                                    </span>   
+                                    </small>
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>
@@ -452,15 +82,34 @@ const AllOrders = () => {
                     {selectedOrder ? (
                         <>
                             {/* Order Details */}
-                            <Card className="mb-4">
+                            <Card className="mb-4 top-box" style={{boxShadow: "0 4px 8px rgba(0,0,0,0.2)", borderRadius: "10px", border: "none",}}>
                                 <Card.Body>
-                                    <Card.Title>Order #{selectedOrder.orderNo}</Card.Title>
-                                    <Card.Text>
-                                        <strong>Customer No:</strong> {selectedOrder.customerNo} <br />
-                                        <strong>Delivery Address:</strong> {selectedOrder.deliveryAddress} <br />
-                                        <strong>Order Date:</strong> {new Date(selectedOrder.orderDate).toLocaleDateString()} <br />
-                                        <strong>Status:</strong> {selectedOrder.status} <br />
-                                        <strong>Comments:</strong> {selectedOrder.comments || "No comments"}
+                                    <Card.Title>Order {selectedOrder.orderNo}</Card.Title>
+                                    <Card.Text >
+                                        <Row>
+                                            <Col md={6} >
+                                                <strong>Customer Name: </strong>{selectedOrder.customerName}
+                                            </Col>
+                                            <Col md={6}>
+                                                <strong>Order Date:</strong> {new Date(selectedOrder.orderDate).toLocaleDateString()}
+                                            </Col>
+                                        </Row>
+                                        <Row className='mt-2'>
+                                            <Col md={6}>
+                                            <strong>Delivery Address:</strong> {selectedOrder.deliveryAddress}
+                                            </Col>
+                                            <Col md={6}>
+                                                <strong><span style={{marginRight:'5px'}}>Status:</span></strong>
+                                                <span className={`badge ${getStatusClass(selectedOrder.status)} p-2`}>
+                                                    {selectedOrder.status}
+                                                </span>
+                                            </Col>
+                                        </Row>
+                                        <Row className='mt-2'>
+                                            <Col md={6}>
+                                            <strong>Comments:</strong> {selectedOrder.comments || "No comments"}
+                                            </Col>
+                                        </Row>
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -494,7 +143,11 @@ const AllOrders = () => {
                             </Table>
                         </>
                     ) : (
-                        <div>Select an order to view its details</div>
+                        <div className="instruction-text">
+                            <div className="alert alert-info text-center">
+                                <strong>Please select an order from the list to view details.</strong>
+                            </div>
+                        </div>
                     )}
                 </Col>
             </Row>
