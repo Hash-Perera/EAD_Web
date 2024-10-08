@@ -3,3 +3,32 @@
 * {
   font-family: "Poppins", sans-serif;
 }
+
+.view-product-modal {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.product-image-section {
+  margin-bottom: 20px;
+}
+.product-details-section {
+  text-align: left;
+}
+.product-name {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.product-description {
+  margin-bottom: 20px;
+}
+.product-info-grid {
+  margin-bottom: 20px;
+}
+.product-actions {
+  margin-top: 20px;
+}
+
+.swal2-container {
+  z-index: 2000 !important;
+}

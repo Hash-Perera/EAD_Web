@@ -8,6 +8,18 @@ import DashboardScreen from "./screens/DashboardScreen.jsx";
 import Login from "./screens/Login.jsx";
 import Signup from "./screens/Signup.jsx";
 import ProductScreen from "./screens/ProductScreen.jsx";
+import UserList from "./screens/user/UserList.jsx";
+import { SnackbarProvider } from "./components/context/CustomSnackbarContext.jsx";
+import ProductList from "./screens/products/ProductList.jsx";
+import MyProductScreen from "./screens/MyProductScreen.jsx";
+import Orders from "./screens/vendor/orders";
+import Reviews from "./screens/vendor/Reviews";
+import CustomerList from "./screens/user/CusomerList.jsx";
+import AllOrders from "./screens/csr/AllOrders.jsx";
+import ToCancell from "./screens/csr/ToCancell.jsx";
+import ResetPassword from "./screens/ResetPassword.jsx";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +34,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/reset",
+        element: <ResetPassword />,
+      },
+      {
         path: "dashboard",
         element: <MainLayout />,
         children: [
@@ -31,7 +47,39 @@ const router = createBrowserRouter([
           },
           {
             path: "products",
-            element: <ProductScreen />,
+            element: <ProductList />,
+          },
+          {
+            path: "Inventory",
+            element: <MyProductScreen />,
+          },
+          {
+            path: "MyProducts",
+            element: <MyProductScreen />,
+          },
+          {
+            path: "users",
+            element: <UserList />,
+          },
+          {
+            path: "orders",
+            element: <Orders />,
+          },
+          {
+            path: "reviews",
+            element: <Reviews />,
+          },
+          {
+            path: "customers",
+            element: <CustomerList />,
+          },
+          {
+            path: "allorders",
+            element: <AllOrders />,
+          },
+          {
+            path: "tocancel",
+            element: <ToCancell />
           },
         ],
       },
@@ -41,6 +89,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <SnackbarProvider>
+      <RouterProvider router={router} />
+    </SnackbarProvider>
   </React.StrictMode>
 );
