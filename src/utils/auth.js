@@ -10,6 +10,10 @@ export const getProfileImage = () => {
   return localStorage.getItem("profileImage");
 };
 
+export const getEmail = () => {
+  return localStorage.getItem("email");
+};
+
 export const logout = () => {
   localStorage.removeItem("userName");
   localStorage.removeItem("userRole");

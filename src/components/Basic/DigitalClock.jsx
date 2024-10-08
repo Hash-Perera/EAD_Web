@@ -42,7 +42,7 @@ const DigitalClock = () => {
     >
       <div style={{ marginRight: "3rem" }}>
         <img
-          src="../../../public/profile.svg"
+          src="/profile.svg"
           alt="Profile"
           style={{
             height: "7rem",
