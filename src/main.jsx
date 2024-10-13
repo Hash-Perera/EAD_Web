@@ -20,6 +20,8 @@ import ToCancell from "./screens/csr/ToCancell.jsx";
 import ResetPassword from "./screens/ResetPassword.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import CategoryList from "./screens/products/CategoryList.jsx";
+import SubCategoryList from "./screens/products/SubCategoryList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +50,14 @@ const router = createBrowserRouter([
           {
             path: "products",
             element: <ProductList />,
+          },
+          {
+            path: "categories",
+            element: <CategoryList />,
+          },
+          {
+            path: "subcategories",
+            element: <SubCategoryList />,
           },
           {
             path: "Inventory",
@@ -79,7 +89,7 @@ const router = createBrowserRouter([
           },
           {
             path: "tocancel",
-            element: <ToCancell />
+            element: <ToCancell />,
           },
         ],
       },
