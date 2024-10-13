@@ -79,6 +79,7 @@ const ProductList = () => {
   // Function to handle input changes
   const handleChange = (event) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setFormData({
       ...formData,
       [name]: value,
@@ -155,7 +156,7 @@ const ProductList = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
-      setLoading(true);
+      // setLoading(true);
 
       if (selectedProduct) {
         await axiosInstance
