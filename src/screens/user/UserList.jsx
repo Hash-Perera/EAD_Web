@@ -23,6 +23,7 @@ import axiosInstance from "../../utils/axios";
 import { useSnackbar } from "../../components/context/CustomSnackbarContext";
 import FileUploader from "../../components/Basic/FileUploader";
 import UserTable from "../../components/Basic/UserTable";
+import Loader from "../../components/Basic/Loader";
 
 const UserList = () => {
   const [open, setOpen] = React.useState(false);
@@ -33,7 +34,6 @@ const UserList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [totalPages, setTotalPages] = useState(0);
-
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -146,7 +146,6 @@ const UserList = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData);
 
     if (validateForm()) {
       setLoading(true);
@@ -176,6 +175,7 @@ const UserList = () => {
             setOpen(false);
           });
       } else {
+        setLoading(true);
         await axiosInstance
           .post(registerAPI, formData)
           .then((response) => {
@@ -198,6 +198,8 @@ const UserList = () => {
             setOpen(false);
           });
       }
+
+      getUserList();
     }
   };
 
@@ -218,6 +220,7 @@ const UserList = () => {
 
   //! get user roles
   const getUserRoles = async () => {
+    setLoading(true);
     await axiosInstance
       .get(masterDataRoles)
       .then((response) => {
@@ -225,6 +228,26 @@ const UserList = () => {
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const getUserList = async () => {
+    setLoading(true);
+    await axiosInstance
+      .get(getAllUser)
+      .then((response) => {
+        console.log(response.data.data);
+        setUsers(response.data.data);
+        setTotalPages(Math.ceil(response.data.data.length / itemsPerPage));
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -250,19 +273,6 @@ const UserList = () => {
   //       console.log(error);
   //     });
   // };
-
-  const getUserList = async () => {
-    await axiosInstance
-      .get(getAllUser)
-      .then((response) => {
-        console.log(response.data.data);
-        setUsers(response.data.data);
-        setTotalPages(Math.ceil(response.data.data.length / itemsPerPage)); // Adjust according to your API response
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   //enable edit
 
@@ -301,6 +311,7 @@ const UserList = () => {
   return (
     <>
       <MainContent>
+        <Loader loading={loading} />
         <Stack
           direction="row"
           spacing={2}

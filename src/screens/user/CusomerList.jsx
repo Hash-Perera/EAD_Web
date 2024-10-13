@@ -10,12 +10,14 @@ import {
 import axiosInstance from "../../utils/axios";
 import UserTable from "../../components/Basic/UserTable";
 import Swal from "sweetalert2";
+import Loader from "../../components/Basic/Loader";
 
 const CustomerList = () => {
   const [users, setUsers] = useState([]);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getUserRoles();
@@ -45,6 +47,7 @@ const CustomerList = () => {
       .then((response) => {
         setUsers(response.data.data);
         setTotalPages(Math.ceil(response.data.data.length / itemsPerPage));
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -61,10 +64,12 @@ const CustomerList = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes !",
     }).then(async (result) => {
+      setLoading(true);
       await axiosInstance
         .get(activeCustomers.replace("{id}", id))
         .then((response) => {
           getUserList();
+          setLoading(false);
           if (result.isConfirmed) {
             Swal.fire({
               title: "Done!",
@@ -74,6 +79,7 @@ const CustomerList = () => {
           }
         })
         .error((error) => {
+          setLoading(false);
           if (result.isConfirmed) {
             Swal.fire({
               title: "Error !",
@@ -88,6 +94,7 @@ const CustomerList = () => {
   return (
     <>
       <MainContent>
+        <Loader loading={loading} />
         <Stack
           direction="row"
           spacing={2}
