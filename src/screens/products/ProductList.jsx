@@ -18,15 +18,17 @@ import ProductCard from "../../components/Basic/ProductCard";
 import ImageCarousel from "../../components/Basic/ImageCarousal";
 import ViewProductModal from "../../components/Basic/ViewProductModal";
 import Swal from "sweetalert2";
+import Loader from "../../components/Basic/Loader";
 
 const ProductList = () => {
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const { showSnackbar } = useSnackbar();
   const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Track the selected product
-  const [isEditing, setIsEditing] = useState(false); // New state to toggle between add/edit/view modes
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [productViewModal, setProductViewModal] = useState(false);
 
   const handleOpen = () => {
@@ -74,11 +76,10 @@ const ProductList = () => {
     stockCount: "",
   });
 
-  const [loading, setLoading] = useState(false); // state for managing loading
-
   // Function to handle input changes
   const handleChange = (event) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setFormData({
       ...formData,
       [name]: value,
@@ -155,7 +156,7 @@ const ProductList = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
-      setLoading(true);
+      // setLoading(true);
 
       if (selectedProduct) {
         await axiosInstance
@@ -234,6 +235,7 @@ const ProductList = () => {
   };
 
   const getSubCategories = async (categoryId) => {
+    setLoading(true);
     setSubCategories([]);
     await axiosInstance
       .get(masterDataSubCategories.replace("{categoryId}", categoryId))
@@ -242,10 +244,14 @@ const ProductList = () => {
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   const getProducts = async () => {
+    setLoading(true);
     await axiosInstance
       .get(productGetAll)
       .then((response) => {
@@ -253,6 +259,9 @@ const ProductList = () => {
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -351,6 +360,7 @@ const ProductList = () => {
   return (
     <>
       <MainContent>
+        <Loader loading={loading} />
         <Stack
           direction="row"
           spacing={2}
