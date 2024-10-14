@@ -13,7 +13,7 @@ export const updateUser = "/User/{id}";
 
 export const productCreate = "/Product/create";
 export const productGetAll = "/Product";
-export const productDelete = "/Product/delete/{id}";
+export const productDelete = "/Inventory/delete/product/{id}";
 export const productUpdate = "/Product/update/{id}";
 
 export const masterDataRoles = "/MasterData/GetRoles";
