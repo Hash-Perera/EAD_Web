@@ -276,6 +276,7 @@ const ProductList = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes !",
     }).then(async (result) => {
+      console.log(id);
       await axiosInstance
         .delete(productDelete.replace("{id}", id))
         .then((response) => {

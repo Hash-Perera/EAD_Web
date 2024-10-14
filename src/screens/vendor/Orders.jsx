@@ -62,14 +62,16 @@ const Orders = () => {
     );
 
     try {
-      const response=await axiosInstance.put(
+      const response = await axiosInstance.put(
         `/orderLine/update/status/${selectedOrderLine}`,
         {
           status: statusChanges[selectedOrderLine],
         }
       );
-      showSnackbar("success", response.data.message || "Status updated successfully!");
-
+      showSnackbar(
+        "success",
+        response.data.message || "Status updated successfully!"
+      );
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -109,6 +111,7 @@ const Orders = () => {
                 <th>Delivery Address</th>
                 <th>Order Date</th>
                 <th>Comments</th>
+                <th>Order Status</th>
               </tr>
             </thead>
             <tbody>
@@ -128,6 +131,7 @@ const Orders = () => {
                   <td>{order?.deliveryAddress}</td>
                   <td>{formatReadableDate(order?.orderDate)}</td>
                   <td>{order?.comments}</td>
+                  <td>{order?.status}</td>
                 </tr>
               ))}
             </tbody>

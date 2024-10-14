@@ -143,6 +143,7 @@ const Reviews = () => {
             <thead>
               <tr>
                 <th>#</th>
+                <th>Customer name</th>
                 <th>Message</th>
                 <th>Rating</th>
               </tr>
@@ -151,6 +152,7 @@ const Reviews = () => {
               {selectedProduct.feedbacks.map((feedback, index) => (
                 <tr key={feedback.id}>
                   <td>{index + 1}</td>
+                  <td>{feedback?.customerId?.name}</td>
                   <td>{feedback?.message}</td>
                   <td>{renderStars(feedback?.rating)}</td>
                 </tr>

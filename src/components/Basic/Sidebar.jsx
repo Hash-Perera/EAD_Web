@@ -16,7 +16,6 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import PersonIcon from "@mui/icons-material/Person";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
@@ -32,6 +31,8 @@ import {
   getEmail,
 } from "../../utils/auth";
 import CustomModal from "./CustomModal";
+import CategoryIcon from "@mui/icons-material/Category";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 
 const Sidebar = () => {
   const settings = [
@@ -114,11 +115,30 @@ const Sidebar = () => {
               },
             }}
           >
-            <RoleBasedComponent allowedRoles={[Roles.ADMIN, Roles.Customer]}>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/home" className="gap-4">
                   <DashboardIcon />
                   <ListItemText primary={"Dashboard"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
+              <ListItem>
+                <ListItemButton href="/dashboard/categories" className="gap-4">
+                  <CategoryIcon />
+                  <ListItemText primary={"Categories"} />
+                </ListItemButton>
+              </ListItem>
+            </RoleBasedComponent>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN, Roles.VENDOR]}>
+              <ListItem>
+                <ListItemButton
+                  href="/dashboard/subcategories"
+                  className="gap-4"
+                >
+                  <ApartmentIcon />
+                  <ListItemText primary={"Sub Categories"} />
                 </ListItemButton>
               </ListItem>
             </RoleBasedComponent>
