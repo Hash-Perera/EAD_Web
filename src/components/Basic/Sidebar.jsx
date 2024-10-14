@@ -115,7 +115,7 @@ const Sidebar = () => {
               },
             }}
           >
-            <RoleBasedComponent allowedRoles={[Roles.ADMIN, Roles.Customer]}>
+            <RoleBasedComponent allowedRoles={[Roles.ADMIN]}>
               <ListItem>
                 <ListItemButton href="/dashboard/home" className="gap-4">
                   <DashboardIcon />
